@@ -28,4 +28,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node your-main-file.js
+        run: node index.js
