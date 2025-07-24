@@ -2,13 +2,17 @@ name: Twitter Auto Poster Bot
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Run every 6 hours
+    # Peak engagement times (UTC):
+    - cron: "0 12 * * *"  # 12 PM UTC (8 AM ET / 5 AM PT) - Morning peak
+    - cron: "0 17 * * *"  # 5 PM UTC (1 PM ET / 10 AM PT) - Lunch peak  
+    - cron: "0 21 * * *"  # 9 PM UTC (5 PM ET / 2 PM PT) - Evening peak
+    - cron: "0 2 * * *"   # 2 AM UTC (10 PM ET / 7 PM PT) - Night peak
   workflow_dispatch: # Allow manual trigger
 
 jobs:
   post-tweet:
     runs-on: ubuntu-latest
-    environment: you-are-amazing-env
+    environment: twitter-bot
 
     steps:
       - name: Checkout repository
