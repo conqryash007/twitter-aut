@@ -212,36 +212,3 @@ async function sendTweet(tweetText) {
     }
   }
 }
-
-async function sendTweet(tweetText) {
-  try {
-    console.log("Attempting to tweet:", tweetText);
-    console.log("Using credentials:");
-    console.log("- APP_KEY:", SECRETS.APP_KEY ? "✓ Set" : "✗ Missing");
-    console.log("- APP_SECRET:", SECRETS.APP_SECRET ? "✓ Set" : "✗ Missing");
-    console.log(
-      "- ACCESS_TOKEN:",
-      SECRETS.ACCESS_TOKEN ? "✓ Set" : "✗ Missing"
-    );
-    console.log(
-      "- ACCESS_SECRET:",
-      SECRETS.ACCESS_SECRET ? "✓ Set" : "✗ Missing"
-    );
-
-    const tweet = await twitterClient.v2.tweet(tweetText);
-    console.log("Tweet sent successfully!", tweet);
-  } catch (error) {
-    console.error("Error sending tweet:", error);
-    console.error("Error details:", error.data || error.message);
-
-    // Check if it's a credentials issue
-    if (error.code === 401) {
-      console.log("\n🔑 Twitter API Authentication Error!");
-      console.log("Please verify your Twitter API credentials:");
-      console.log("1. Check that your API keys are correct in the .env file");
-      console.log("2. Ensure your Twitter app has Read and Write permissions");
-      console.log("3. Make sure you're using the correct API version (v2)");
-      console.log("4. Verify your app is not suspended or restricted");
-    }
-  }
-}
