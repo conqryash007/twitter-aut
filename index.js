@@ -31,7 +31,7 @@ async function generateAIContent() {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt =
-    "Generate an empowering and encouraging tweet for women who are heartbroken and need encouragement. Focus on self-love, inner strength, beauty, healing, and moving forward. The message should be uplifting, authentic, and remind them of their worth. Keep it under 280 characters, use plain text, and you can include emojis. Make it feel personal and supportive.";
+    "You are creating content for Twitter/X. Generate an empowering and encouraging tweet for women who are heartbroken and need encouragement. Focus on self-love, inner strength, beauty, healing, and moving forward. The message should be uplifting, authentic, and remind them of their worth. IMPORTANT: The tweet must be EXACTLY under 280 characters including spaces, emojis, and hashtags. Use plain text with emojis and include 2-3 relevant hashtags like #SelfLove #Healing #Strength. Make it feel personal and supportive. Do not exceed 280 characters.";
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
@@ -39,7 +39,10 @@ async function generateAIContent() {
 
   // Clean up and ensure it's tweet-appropriate
   text = text.trim();
+
+  // Extra safety check - if still too long after Gemini's attempt
   if (text.length > 280) {
+    console.log(`⚠️ Gemini generated ${text.length} characters. Truncating...`);
     text = text.substring(0, 277) + "...";
   }
 
@@ -47,6 +50,7 @@ async function generateAIContent() {
     throw new Error("Generated text too short");
   }
 
+  console.log(`📝 AI generated text: ${text.length}/280 characters`);
   return text;
 }
 
@@ -182,6 +186,15 @@ run();
 
 async function sendTweet(tweetText) {
   try {
+    // Validate tweet length before sending
+    if (tweetText.length > 280) {
+      console.log(
+        `⚠️ Tweet too long (${tweetText.length} characters). Truncating...`
+      );
+      tweetText = tweetText.substring(0, 277) + "...";
+    }
+
+    console.log(`📝 Tweet length: ${tweetText.length}/280 characters`);
     console.log("Attempting to tweet:", tweetText);
     console.log("Using credentials:");
     console.log("- APP_KEY:", SECRETS.APP_KEY ? "✓ Set" : "✗ Missing");
@@ -209,6 +222,11 @@ async function sendTweet(tweetText) {
       console.log("2. Ensure your Twitter app has Read and Write permissions");
       console.log("3. Make sure you're using the correct API version (v2)");
       console.log("4. Verify your app is not suspended or restricted");
+    } else if (error.code === 403) {
+      console.log("\n🚫 Twitter API Permission Error!");
+      console.log(
+        "This could be an API access level issue. You may need Elevated access."
+      );
     }
   }
 }
